@@ -4,54 +4,279 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
   PolicySchemaVersion="0.3.0.0" 
-  TenantId="yourtenant.onmicrosoft.com" 
+  TenantId="iptvtg.onmicrosoft.com" 
   PolicyId="B2C_1A_TrustFrameworkExtensions" 
-  PublicPolicyUri="http://yourtenant.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
-  
-  <BasePolicy>
-    <TenantId>yourtenant.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
-  </BasePolicy>
-  <BuildingBlocks>
+  PublicPolicyUri="http://iptvtg.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
 
-  </BuildingBlocks>
+	<BasePolicy>
+		<TenantId>iptvtg.onmicrosoft.com</TenantId>
+		<PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
+	</BasePolicy>
+	<BuildingBlocks>
 
-  <ClaimsProviders>
+	</BuildingBlocks>
 
-    <ClaimsProvider>
-      <DisplayName>Facebook</DisplayName>
-      <TechnicalProfiles>
-        <TechnicalProfile Id="Facebook-OAUTH">
-          <Metadata>
-            <Item Key="client_id">facebook_clientid</Item>
-            <Item Key="scope">email public_profile</Item>
-            <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
-          </Metadata>
-        </TechnicalProfile>
-      </TechnicalProfiles>
-    </ClaimsProvider>
+	<ClaimsProviders>
+		<ClaimsProvider>
+			<Domain>TangerineGlobal</Domain>
+			<DisplayName>Login using Tangerine Global</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="TangerineProfile">
+					<DisplayName>Tangerine Employee</DisplayName>
+					<Description>Login with your Tangerine Global account</Description>
+					<Protocol Name="OpenIdConnect" />
+					<OutputTokenFormat>JWT</OutputTokenFormat>
+					<Metadata>
+						<Item Key="METADATA">https://login.windows.net/tangerineglobal.com/.well-known/openid-configuration</Item>
+						<Item Key="ProviderName">https://sts.windows.net/d85db24b-497e-49aa-a894-8766179b87c9/</Item>
+						<Item Key="client_id">ac2f52b7-a229-46fd-80af-754e492be838</Item>
+						<Item Key="IdTokenAudience">ac2f52b7-a229-46fd-80af-754e492be838</Item>
+						<Item Key="response_types">id_token</Item>
+						<Item Key="UsePolicyInRedirectUri">false</Item>
+					</Metadata>
+					<CryptographicKeys>
+						<Key Id="client_secret" StorageReferenceId="B2C_1A_TangerineSecret" />
+					</CryptographicKeys>
+					<OutputClaims>
+						<OutputClaim ClaimTypeReferenceId="socialIdpUserId" PartnerClaimType="oid" />
+						<OutputClaim ClaimTypeReferenceId="tenantId" PartnerClaimType="tid" />
+						<OutputClaim ClaimTypeReferenceId="email" />
+						<!--OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" /-->
+						<!--OutputClaim ClaimTypeReferenceId="surName" PartnerClaimType="family_name" /-->
+						<OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+						<OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="tangerineAuthentication" />
+						<OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="Tangerine" />
+					</OutputClaims>
+					<OutputClaimsTransformations>
+						<OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+						<OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+						<OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+						<OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+					</OutputClaimsTransformations>
+					<UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+				</TechnicalProfile>
+			</TechnicalProfiles>
+		</ClaimsProvider>
+
+		<ClaimsProvider>
+			<DisplayName>Facebook</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="Facebook-OAUTH">
+					<Metadata>
+						<Item Key="client_id">facebook_clientid</Item>
+						<Item Key="scope">email public_profile</Item>
+						<Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
+					</Metadata>
+				</TechnicalProfile>
+			</TechnicalProfiles>
+		</ClaimsProvider>
+
+		<ClaimsProvider>
+			<Domain>google.com</Domain>
+			<DisplayName>Google</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="Google-OAUTH">
+					<DisplayName>Google</DisplayName>
+					<Protocol Name="OAuth2" />
+					<Metadata>
+						<Item Key="ProviderName">google</Item>
+						<Item Key="authorization_endpoint">https://accounts.google.com/o/oauth2/auth</Item>
+						<Item Key="AccessTokenEndpoint">https://accounts.google.com/o/oauth2/token</Item>
+						<Item Key="ClaimsEndpoint">https://www.googleapis.com/oauth2/v1/userinfo</Item>
+						<Item Key="scope">email</Item>
+						<Item Key="HttpBinding">POST</Item>
+						<Item Key="UsePolicyInRedirectUri">0</Item>
+						<Item Key="client_id">1002618792059-3rcja38c35hqfsc2eec4tro4iuecu98k.apps.googleusercontent.com</Item>
+					</Metadata>
+					<CryptographicKeys>
+						<Key Id="client_secret" StorageReferenceId="B2C_1A_GoogleSecret" />
+					</CryptographicKeys>
+					<OutputClaims>
+						<OutputClaim ClaimTypeReferenceId="socialIdpUserId" PartnerClaimType="id" />
+						<OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
+						<OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="given_name" />
+						<OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="family_name" />
+						<OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="name" />
+						<OutputClaim ClaimTypeReferenceId="identityProvider" DefaultValue="google.com" />
+						<OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="socialIdpAuthentication" />
+					</OutputClaims>
+					<OutputClaimsTransformations>
+						<OutputClaimsTransformation ReferenceId="CreateRandomUPNUserName" />
+						<OutputClaimsTransformation ReferenceId="CreateUserPrincipalName" />
+						<OutputClaimsTransformation ReferenceId="CreateAlternativeSecurityId" />
+						<OutputClaimsTransformation ReferenceId="CreateSubjectClaimFromAlternativeSecurityId" />
+					</OutputClaimsTransformations>
+					<UseTechnicalProfileForSessionManagement ReferenceId="SM-SocialLogin" />
+					<ErrorHandlers>
+						<ErrorHandler>
+							<ErrorResponseFormat>json</ErrorResponseFormat>
+							<ResponseMatch>$[?(@@.error == 'invalid_grant')]</ResponseMatch>
+							<Action>Reauthenticate</Action>
+							<!--In case of authorization code used error, we don't want the user to select his account again.-->
+							<!--AdditionalRequestParameters Key="prompt">select_account</AdditionalRequestParameters-->
+						</ErrorHandler>
+					</ErrorHandlers>
+				</TechnicalProfile>
+			</TechnicalProfiles>
+		</ClaimsProvider>
 
 
-    <ClaimsProvider>
-      <DisplayName>Local Account SignIn</DisplayName>
-      <TechnicalProfiles>
-        <TechnicalProfile Id="login-NonInteractive">
-          <Metadata>
-            <Item Key="client_id">ProxyIdentityExperienceFrameworkAppId</Item>
-            <Item Key="IdTokenAudience">IdentityExperienceFrameworkAppId</Item>
-          </Metadata>
-          <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="ProxyIdentityExperienceFrameworkAppID" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="IdentityExperienceFrameworkAppID" />
-          </InputClaims>
-        </TechnicalProfile>
-      </TechnicalProfiles>
-    </ClaimsProvider>
+		<ClaimsProvider>
+			<DisplayName>Local Account SignIn</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="login-NonInteractive">
+					<Metadata>
+						<Item Key="client_id">cb5cd69e-2145-4026-9178-6956020455b2</Item>
+						<Item Key="IdTokenAudience">0cc8c095-712d-4868-920e-234b5604d181</Item>
+					</Metadata>
+					<InputClaims>
+						<InputClaim ClaimTypeReferenceId="client_id" DefaultValue="cb5cd69e-2145-4026-9178-6956020455b2" />
+						<InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="0cc8c095-712d-4868-920e-234b5604d181" />
+					</InputClaims>
+				</TechnicalProfile>
+			</TechnicalProfiles>
+		</ClaimsProvider>
 
-  </ClaimsProviders>
+		<ClaimsProvider>
+			<DisplayName>REST APIs</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="NotifyRestOfActivity">
+					<DisplayName>Check DisplayName</DisplayName>
+					<Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+					<Metadata>
+						<Item Key="ServiceUrl">https://dabmitestfunction.azurewebsites.net/api/HttpTriggerCSharp1?code=BAlqw4Rz8SsertRDbijOe0QUqRJaNyjO1qt0ZputTrGHaYaCkyLXgA==</Item>
+						<Item Key="AuthenticationType">None</Item>
+						<Item Key="SendClaimsIn">Body</Item>
+					</Metadata>
+					<InputClaims>
+						<InputClaim ClaimTypeReferenceId="displayName" />
+						<InputClaim ClaimTypeReferenceId="email"  />
+						<InputClaim ClaimTypeReferenceId="objectId"  />
+						<InputClaim ClaimTypeReferenceId="identityProvider"  />
+						<InputClaim ClaimTypeReferenceId="socialIdpUserId"/>
+						<InputClaim ClaimTypeReferenceId="tenantId"/>
+						<InputClaim ClaimTypeReferenceId="newUser"/>
+					</InputClaims>
+					<UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+				</TechnicalProfile>
+				<!--<TechnicalProfile Id="NotifyRestOfActivity">
+					<!{1}**<ValidationTechnicalProfiles>
+						<ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
+					</ValidationTechnicalProfiles>**{1}>
+				</TechnicalProfile>-->
+			</TechnicalProfiles>
+		</ClaimsProvider>
 
-    <!--UserJourneys>
-	
-	</UserJourneys-->
+	</ClaimsProviders>
+
+	<UserJourneys>
+		<UserJourney Id="SignUpOrSignInTangerine">
+			<OrchestrationSteps>
+
+				<OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+					<ClaimsProviderSelections>
+						<ClaimsProviderSelection TargetClaimsExchangeId="FacebookExchange" />
+						<ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+						<ClaimsProviderSelection TargetClaimsExchangeId="TangerineExchange" />
+						<ClaimsProviderSelection TargetClaimsExchangeId="GoogleExchange" />
+					</ClaimsProviderSelections>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+
+				<!-- Check if the user has selected to sign in using one of the social providers -->
+				<OrchestrationStep Order="2" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+							<Value>objectId</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="FacebookExchange" TechnicalProfileReferenceId="Facebook-OAUTH" />
+						<ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+						<ClaimsExchange Id="TangerineExchange" TechnicalProfileReferenceId="TangerineProfile" />
+						<ClaimsExchange Id="GoogleExchange" TechnicalProfileReferenceId="Google-OAUTH" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+
+				<!-- For social IDP authentication, attempt to find the user account in the directory. -->
+				<OrchestrationStep Order="3" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+							<Value>authenticationSource</Value>
+							<Value>localAccountAuthentication</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="AADUserReadUsingAlternativeSecurityId" TechnicalProfileReferenceId="AAD-UserReadUsingAlternativeSecurityId-NoError" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+
+				<!-- Show self-asserted page only if the directory does not have the user account already (i.e. we do not have an objectId). 
+          This can only happen when authentication happened using a social IDP. If local account was created or authentication done
+          using ESTS in step 2, then an user account must exist in the directory by this time. -->
+				<OrchestrationStep Order="4" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+							<Value>objectId</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="SelfAsserted-Social" TechnicalProfileReferenceId="SelfAsserted-Social" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+
+				<!-- This step reads any user attributes that we may not have received when authenticating using ESTS so they can be sent 
+          in the token. -->
+				<OrchestrationStep Order="5" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+							<Value>authenticationSource</Value>
+							<Value>socialIdpAuthentication</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+				<!-- The previous step (SelfAsserted-Social) could have been skipped if there were no attributes to collect 
+             from the user. So, in that case, create the user in the directory if one does not already exist 
+             (verified using objectId which would be set from the last step if account was created in the directory. -->
+				<OrchestrationStep Order="6" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+							<Value>objectId</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="AADUserWrite" TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+				
+				<OrchestrationStep Order="7" Type="ClaimsExchange">
+					<Preconditions>
+						<Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+							<Value>newUser</Value>
+							<Value>false</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
+					</Preconditions>
+					<ClaimsExchanges>
+						<ClaimsExchange Id="RestNotify" TechnicalProfileReferenceId="NotifyRestOfActivity" />
+					</ClaimsExchanges>
+				</OrchestrationStep>
+
+				<OrchestrationStep Order="8" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+
+			</OrchestrationSteps>
+			<ClientDefinition ReferenceId="DefaultWeb" />
+		</UserJourney>
+	</UserJourneys>
 
 </TrustFrameworkPolicy>
