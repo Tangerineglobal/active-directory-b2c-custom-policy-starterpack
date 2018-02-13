@@ -148,6 +148,7 @@
 						<Item Key="AuthenticationType">None</Item>
 						<Item Key="SendClaimsIn">Body</Item>
 					</Metadata>
+					<!--Claims that will be sent to rest api-->
 					<InputClaims>
 						<InputClaim ClaimTypeReferenceId="displayName" />
 						<InputClaim ClaimTypeReferenceId="email"  />
@@ -157,6 +158,7 @@
 						<InputClaim ClaimTypeReferenceId="tenantId"/>
 						<InputClaim ClaimTypeReferenceId="newUser"/>
 					</InputClaims>
+					<!--Rest api can return output claims, but currently we don't require that.-->
 					<UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
 				</TechnicalProfile>
 				<!--<TechnicalProfile Id="NotifyRestOfActivity">
@@ -259,6 +261,7 @@
 					</ClaimsExchanges>
 				</OrchestrationStep>
 				
+				<!--If the user is new, then send the newly created user and selected claims to a rest api so we can tie the b2c user to the media 1st user-->
 				<OrchestrationStep Order="7" Type="ClaimsExchange">
 					<Preconditions>
 						<Precondition Type="ClaimEquals" ExecuteActionsIf="true">
