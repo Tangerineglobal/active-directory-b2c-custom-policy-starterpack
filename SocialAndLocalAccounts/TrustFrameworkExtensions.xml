@@ -266,6 +266,10 @@
 							<Value>false</Value>
 							<Action>SkipThisOrchestrationStep</Action>
 						</Precondition>
+						<Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+							<Value>newUser</Value>
+							<Action>SkipThisOrchestrationStep</Action>
+						</Precondition>
 					</Preconditions>
 					<ClaimsExchanges>
 						<ClaimsExchange Id="RestNotify" TechnicalProfileReferenceId="NotifyRestOfActivity" />
