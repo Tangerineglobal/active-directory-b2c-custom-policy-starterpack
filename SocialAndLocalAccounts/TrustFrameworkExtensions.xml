@@ -138,13 +138,14 @@
 		</ClaimsProvider>
 
 		<ClaimsProvider>
-			<DisplayName>REST APIs</DisplayName>
+			<DisplayName>Rest notify claims</DisplayName>
 			<TechnicalProfiles>
 				<TechnicalProfile Id="NotifyRestOfActivity">
-					<DisplayName>Check DisplayName</DisplayName>
+					<DisplayName>Rest notify claims</DisplayName>
 					<Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 					<Metadata>
-						<Item Key="ServiceUrl">https://dabmitestfunction.azurewebsites.net/api/HttpTriggerCSharp1?code=BAlqw4Rz8SsertRDbijOe0QUqRJaNyjO1qt0ZputTrGHaYaCkyLXgA==</Item>
+						<Item Key="ServiceUrl">https://dabmitestfunction.azurewebsites.net/api/HttpTriggerCSharp1?code=BAlqw4Rz8SsertRDbijOe0QUqRJaNyjO1qt0ZputTrGHaYaCkyLXgA==
+						</Item>
 						<Item Key="AuthenticationType">None</Item>
 						<Item Key="SendClaimsIn">Body</Item>
 					</Metadata>
@@ -166,6 +167,41 @@
 						<ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
 					</ValidationTechnicalProfiles>**{1}>
 				</TechnicalProfile>-->
+			</TechnicalProfiles>
+		</ClaimsProvider>
+
+		<ClaimsProvider>
+			<DisplayName>Validate Claims</DisplayName>
+			<TechnicalProfiles>
+				<TechnicalProfile Id="RestValidateClaims">
+					<DisplayName>Validate claims with a rest post.</DisplayName>
+					<Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+					<Metadata>
+						<Item Key="ServiceUrl">https://dabmitestfunction.azurewebsites.net/api/HttpTriggerValidateClaims?code=kFDPWshY04o3b8A7nlkR8NjfyEH8k2Wq6P9DuXCMaEjIWeki4/1Y3w==
+						</Item>
+						<Item Key="AuthenticationType">None</Item>
+						<Item Key="SendClaimsIn">Body</Item>
+					</Metadata>
+					<InputClaims>
+						<InputClaim ClaimTypeReferenceId="displayName" />
+						<InputClaim ClaimTypeReferenceId="email"  />
+						<InputClaim ClaimTypeReferenceId="objectId"  />
+						<InputClaim ClaimTypeReferenceId="identityProvider"  />
+						<InputClaim ClaimTypeReferenceId="socialIdpUserId"/>
+						<InputClaim ClaimTypeReferenceId="tenantId"/>
+						<InputClaim ClaimTypeReferenceId="newUser"/>
+					</InputClaims>
+					<OutputClaims>
+						<OutputClaim ClaimTypeReferenceId="newUser"/>
+						<OutputClaim ClaimTypeReferenceId="objectId"  />
+					</OutputClaims>
+					<UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+				</TechnicalProfile>
+				<TechnicalProfile Id="SelfAsserted-Social">
+					<ValidationTechnicalProfiles>
+						<ValidationTechnicalProfile ReferenceId="RestValidateClaims" />
+					</ValidationTechnicalProfiles>
+				</TechnicalProfile>
 			</TechnicalProfiles>
 		</ClaimsProvider>
 
@@ -260,7 +296,7 @@
 						<ClaimsExchange Id="AADUserWrite" TechnicalProfileReferenceId="AAD-UserWriteUsingAlternativeSecurityId" />
 					</ClaimsExchanges>
 				</OrchestrationStep>
-				
+
 				<!--If the user is new, then send the newly created user and selected claims to a rest api so we can tie the b2c user to the media 1st user-->
 				<OrchestrationStep Order="7" Type="ClaimsExchange">
 					<Preconditions>
